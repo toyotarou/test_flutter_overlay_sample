@@ -25,6 +25,7 @@ OverlayEntry createDraggableOverlayEntry({
   required double height,
   required Color color,
   required VoidCallback onRemove,
+  required Widget widget,
 }) {
   final screenSize = MediaQuery.of(context).size;
 
@@ -59,6 +60,8 @@ OverlayEntry createDraggableOverlayEntry({
                 children: [
                   Text('Width: ${item.width}, Height: ${item.height}', style: const TextStyle(color: Colors.white)),
                   const SizedBox(height: 10),
+                  widget,
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () => onRemove(),
                     child: const Text('Close'),
@@ -86,6 +89,7 @@ void addOverlay({
   required double height,
   required Color color,
   required Offset initialPosition,
+  required Widget widget,
 }) {
   late OverlayEntry entry;
 
@@ -100,6 +104,7 @@ void addOverlay({
 
       setStateCallback(() => entries.remove(entry));
     },
+    widget: widget,
   );
 
   setStateCallback(() => entries.add(entry));
