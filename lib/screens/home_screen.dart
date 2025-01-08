@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_general_dialog_sample/extensions/extensions.dart';
 import 'package:test_general_dialog_sample/screens/components/dummy_alert.dart';
-
 import 'package:test_general_dialog_sample/screens/parts/overlay_utils.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,14 +10,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<OverlayEntry> _overlayEntries = [];
+  final List<OverlayEntry> _bigEntries = [];
 
-  ///
+  final List<OverlayEntry> _smallEntries = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AddOverlay Demo'),
+        title: const Text('Separate Overlays Demo'),
       ),
       body: Center(
         child: Column(
@@ -27,34 +26,34 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                addOverlay(
+                addBigOverlay(
                   context: context,
-                  entries: _overlayEntries,
+                  bigEntries: _bigEntries,
                   setStateCallback: setState,
                   width: 300,
-                  height: 300,
-                  color: Colors.indigo,
-                  initialPosition: Offset((context.screenSize.width - 300), 100),
+                  height: 200,
+                  color: Colors.blueGrey,
+                  initialPosition: const Offset(80, 150),
                   widget: const DummyAlert(),
                 );
               },
-              child: const Text('Add Big Overlay'),
+              child: const Text('Show Big Overlay'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                addOverlay(
+                addSmallOverlay(
                   context: context,
-                  entries: _overlayEntries,
+                  smallEntries: _smallEntries,
                   setStateCallback: setState,
-                  width: 200,
-                  height: 200,
-                  color: Colors.green,
-                  initialPosition: Offset(200, (context.screenSize.height - 200)),
+                  width: 180,
+                  height: 120,
+                  color: Colors.deepOrange,
+                  initialPosition: const Offset(200, 80),
                   widget: const DummyAlert(),
                 );
               },
-              child: const Text('Add Small Overlay'),
+              child: const Text('Show Small Overlay'),
             ),
           ],
         ),

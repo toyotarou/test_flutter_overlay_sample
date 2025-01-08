@@ -17,6 +17,7 @@ class DraggableOverlayItem {
 
 //=======================================================//
 
+///
 OverlayEntry createDraggableOverlayEntry({
   required BuildContext context,
   required Offset initialOffset,
@@ -28,12 +29,7 @@ OverlayEntry createDraggableOverlayEntry({
 }) {
   final screenSize = MediaQuery.of(context).size;
 
-  final item = DraggableOverlayItem(
-    position: initialOffset,
-    width: width,
-    height: height,
-    color: color,
-  );
+  final item = DraggableOverlayItem(position: initialOffset, width: width, height: height, color: color);
 
   final entry = OverlayEntry(
     builder: (context) {
@@ -73,7 +69,7 @@ OverlayEntry createDraggableOverlayEntry({
                       children: [
                         const Icon(Icons.drag_indicator),
                         const Expanded(child: Text('')),
-                        IconButton(onPressed: () => onRemove(), icon: const Icon(Icons.close)),
+                        IconButton(onPressed: onRemove, icon: const Icon(Icons.close)),
                       ],
                     ),
                   ),
@@ -109,9 +105,10 @@ OverlayEntry createDraggableOverlayEntry({
 
 //=======================================================//
 
-void addOverlay({
+///
+void addBigOverlay({
   required BuildContext context,
-  required List<OverlayEntry> entries,
+  required List<OverlayEntry> bigEntries,
   required void Function(VoidCallback fn) setStateCallback,
   required double width,
   required double height,
@@ -119,6 +116,53 @@ void addOverlay({
   required Offset initialPosition,
   required Widget widget,
 }) {
+  if (bigEntries.isNotEmpty) {
+    for (final e in bigEntries) {
+      e.remove();
+    }
+
+    setStateCallback(() => bigEntries.clear());
+  }
+
+  late OverlayEntry entry;
+  entry = createDraggableOverlayEntry(
+    context: context,
+    initialOffset: initialPosition,
+    width: width,
+    height: height,
+    color: color,
+    onRemove: () {
+      entry.remove();
+
+      setStateCallback(() => bigEntries.remove(entry));
+    },
+    widget: widget,
+  );
+
+  setStateCallback(() => bigEntries.add(entry));
+
+  Overlay.of(context).insert(entry);
+}
+
+///
+void addSmallOverlay({
+  required BuildContext context,
+  required List<OverlayEntry> smallEntries,
+  required void Function(VoidCallback fn) setStateCallback,
+  required double width,
+  required double height,
+  required Color color,
+  required Offset initialPosition,
+  required Widget widget,
+}) {
+  if (smallEntries.isNotEmpty) {
+    for (final e in smallEntries) {
+      e.remove();
+    }
+
+    setStateCallback(() => smallEntries.clear());
+  }
+
   late OverlayEntry entry;
 
   entry = createDraggableOverlayEntry(
@@ -130,12 +174,11 @@ void addOverlay({
     onRemove: () {
       entry.remove();
 
-      setStateCallback(() => entries.remove(entry));
+      setStateCallback(() => smallEntries.remove(entry));
     },
     widget: widget,
   );
 
-  setStateCallback(() => entries.add(entry));
-
+  setStateCallback(() => smallEntries.add(entry));
   Overlay.of(context).insert(entry);
 }
