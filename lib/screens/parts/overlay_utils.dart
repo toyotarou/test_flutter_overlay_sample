@@ -84,6 +84,7 @@ OverlayEntry createDraggableOverlayEntry({
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Container(width: double.infinity),
                         Text('Width: ${item.width}'),
                         Text('Height: ${item.height}'),
                         Text('dx: ${item.position.dx}'),
