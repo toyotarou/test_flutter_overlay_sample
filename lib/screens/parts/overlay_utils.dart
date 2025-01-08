@@ -17,7 +17,6 @@ class DraggableOverlayItem {
 
 //=======================================================//
 
-///
 OverlayEntry createDraggableOverlayEntry({
   required BuildContext context,
   required Offset initialOffset,
@@ -29,45 +28,73 @@ OverlayEntry createDraggableOverlayEntry({
 }) {
   final screenSize = MediaQuery.of(context).size;
 
-  final item = DraggableOverlayItem(position: initialOffset, width: width, height: height, color: color);
+  final item = DraggableOverlayItem(
+    position: initialOffset,
+    width: width,
+    height: height,
+    color: color,
+  );
 
   final entry = OverlayEntry(
     builder: (context) {
       return Positioned(
         left: item.position.dx,
         top: item.position.dy,
-        child: GestureDetector(
-          onPanUpdate: (details) {
-            item.position += details.delta;
+        child: Material(
+          elevation: 8,
+          color: item.color,
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            width: item.width,
+            height: item.height,
+            child: Column(
+              children: [
+                Container(
+                  color: Colors.grey[300],
+                  height: 40,
+                  width: double.infinity,
+                  child: Listener(
+                    onPointerMove: (PointerMoveEvent event) {
+                      if (event.buttons == 1) {
+                        item.position += event.delta;
 
-            final maxX = screenSize.width - item.width;
-            final maxY = screenSize.height - item.height;
-            final clampedX = item.position.dx.clamp(0, maxX);
-            final clampedY = item.position.dy.clamp(0, maxY);
-            item.position = Offset(double.parse(clampedX.toString()), double.parse(clampedY.toString()));
+                        final maxX = screenSize.width - item.width;
+                        final maxY = screenSize.height - item.height;
+                        final clampedX = item.position.dx.clamp(0, maxX);
+                        final clampedY = item.position.dy.clamp(0, maxY);
 
-            item.entry.markNeedsBuild();
-          },
-          child: Material(
-            elevation: 8,
-            color: item.color,
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
-              width: item.width,
-              height: item.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Width: ${item.width}, Height: ${item.height}', style: const TextStyle(color: Colors.white)),
-                  const SizedBox(height: 10),
-                  widget,
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () => onRemove(),
-                    child: const Text('Close'),
+                        item.position = Offset(double.parse(clampedX.toString()), double.parse(clampedY.toString()));
+
+                        item.entry.markNeedsBuild();
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.drag_indicator),
+                        const Expanded(child: Text('')),
+                        IconButton(onPressed: () => onRemove(), icon: const Icon(Icons.close)),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Width: ${item.width}'),
+                        Text('Height: ${item.height}'),
+                        Text('dx: ${item.position.dx}'),
+                        Text('dy: ${item.position.dy}'),
+                        const SizedBox(height: 10),
+                        widget,
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
